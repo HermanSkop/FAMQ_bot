@@ -1,12 +1,12 @@
 import datetime
 
-import discord
+import disnake
 import pytz
 import config
 import file_manager
 
 
-def update_activity(user: discord.member):
+def update_activity(user: disnake.member):
     updated_user = count_played_time(user.id, user.activity.start)
     file_manager.update_json_file(updated_user, config.activity_file_path)
 
@@ -46,14 +46,14 @@ def get_minutes(date1: datetime.datetime, date2: datetime.datetime) -> int:
     return int(delta.total_seconds() / 60)
 
 
-def create_embed_message(message: discord.Message) -> discord.Embed:
-    embed = discord.Embed(
+def create_stats_message(author: disnake.Member) -> disnake.Embed:
+    embed = disnake.Embed(
         title='Статистика:',
         # description='Description of the Embed Message',
-        color=discord.Color.dark_magenta()
+        color=disnake.Color.dark_magenta()
     )
 
-    user_activity = file_manager.get_user_activity(message.author.id)
+    user_activity = file_manager.get_user_activity(author.id)
     # Add fields to the embed message
     embed.add_field(name='До следующего балла(мин):',
                     value=str(file_manager.get_minutes_for_points() - user_activity[0]),
@@ -62,5 +62,23 @@ def create_embed_message(message: discord.Message) -> discord.Embed:
     embed.add_field(name='Максимальное количество баллов:', value=str(user_activity[2]), inline=False)
 
     # Set the author of the embed message
-    embed.set_author(name=message.author, icon_url=message.author.avatar)
+    embed.set_author(name=author, icon_url=author.avatar)
     return embed
+
+
+def create_help_message() -> disnake.Embed:
+    embed = disnake.Embed(
+        title='Need help?',
+        # description='Description of the Embed Message',
+        color=disnake.Color.blue()
+    )
+    embed.add_field(name='some help..?', value='asd')
+    return embed
+
+
+def match_roles(existing_roles: list[str]) -> bool:
+    needed_roles = file_manager.get_roles()
+    for role in existing_roles:
+        if role in needed_roles:
+            return True
+    return False

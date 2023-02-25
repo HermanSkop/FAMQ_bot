@@ -74,6 +74,14 @@ def get_channels() -> list[int]:
     return parse_value_from_json(config.config_file_path, "channels")
 
 
+def get_roles() -> list[str]:
+    return parse_value_from_json(config.config_file_path, "roles")
+
+
+def get_games() -> list[str]:
+    return parse_value_from_json(config.config_file_path, "games")
+
+
 def get_user_activity(user_id: int) -> [int, int, int]:
     act = parse_value_from_json(config.activity_file_path, user_id)
     if act is None:

@@ -1,39 +1,40 @@
-import discord
+import disnake
+from disnake.ext import commands
 import activity_manager
 import file_manager
 
-intents = discord.Intents.default()
-intents.presences = True
-intents.members = True
-
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix="!", intents=disnake.Intents.all())
 
 
-@client.event
+# 694078814585880598
+
+
+@bot.slash_command(name='stats', description='Узнай свою статистику')
+async def print_stats(ctx: disnake.ApplicationCommandInteraction):
+    await ctx.send(embed=activity_manager.create_stats_message(ctx.author))
+
+
+@bot.slash_command(name='help', description='Команды и условия использования')
+async def print_help(ctx):
+    await ctx.send(embed=activity_manager.create_help_message())
+
+
+@bot.event
 async def on_ready():
-    print(f'{client.user} is connected to the following guilds:\n')
-    for guild in client.guilds:
+    print(f'{bot.user} is connected to the following guilds:\n')
+    for guild in bot.guilds:
         print(f'{guild.name}(id: {guild.id})')
     print('\n')
 
 
-@client.event
+@bot.event
 async def on_presence_update(before, after):
-    r = [i.name for i in after.roles]
-    if before.activity != after.activity and '💚#3 Shadows Family💚' in r:
-        if before.activity is not None and before.activity.name == 'Grand Theft Auto V':
+    roles = [i.name for i in after.roles]
+    if before.activity != after.activity and activity_manager.match_roles(roles):
+        print(after.name + ' enters ' + after.activity.name)
+        if before.activity is not None and before.activity.name in file_manager.get_games():
             activity_manager.update_activity(before)
-            print(before.name + ' leaves game')
+            print(before.name + ' leaves ' + before.activity.name)
 
 
-@client.event
-async def on_message(message):
-    # Ignore messages sent by the bot itself
-    if message.author == client.user:
-        return
-
-    if message.channel.id in file_manager.get_channels():
-        await message.channel.send(embed=activity_manager.create_embed_message(message))
-
-
-client.run('MTA3NzI3NTE1MDA5NDk2Njg3NQ.G_AqQG.7kyLGrUy0fRMF-wXDwi3VWikbu0Sg8fglcoLk0')
+bot.run(token='MTA3NzI3NTE1MDA5NDk2Njg3NQ.G_AqQG.7kyLGrUy0fRMF-wXDwi3VWikbu0Sg8fglcoLk0')
