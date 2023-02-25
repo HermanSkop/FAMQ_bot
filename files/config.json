@@ -1,8 +1,16 @@
 {
-  "roles":"\uD83D\uDC9A#3 Shadows Family\uD83D\uDC9A",
-  "games": [
-    "Grand Theft Auto V"
-  ],
-  "minutes_for_point": 60,
-  "channels": [1078758350273122375]
+    "roles": [
+        482879179847892993,
+        980942753531846706
+    ],
+    "games": [
+        "Grand Theft Auto V"
+    ],
+    "minutes_for_point": 60,
+    "channels": [
+        1078758350273122375
+    ],
+    "admin_roles": [
+        1078746439750004917
+    ]
 }

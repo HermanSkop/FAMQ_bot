@@ -6,11 +6,6 @@ import config
 import file_manager
 
 
-def update_activity(user: disnake.member):
-    updated_user = count_played_time(user.id, user.activity.start)
-    file_manager.update_json_file(updated_user, config.activity_file_path)
-
-
 def count_played_time(user_id: int, start_time: datetime.datetime) -> {int: [int, int, int]}:
     """
     Sums up playing time and counts points for it
@@ -22,7 +17,7 @@ def count_played_time(user_id: int, start_time: datetime.datetime) -> {int: [int
 
     if user_activity is None:
         user_activity = [0, 0, 0]
-    mins = get_minutes(datetime.datetime.utcnow(), start_time) + user_activity[0]
+    mins = subtract(datetime.datetime.utcnow(), start_time) + user_activity[0]
     points = user_activity[1] + (mins // file_manager.get_minutes_for_points())
     mins %= file_manager.get_minutes_for_points()
 
@@ -40,40 +35,10 @@ def count_played_time(user_id: int, start_time: datetime.datetime) -> {int: [int
     }
 
 
-def get_minutes(date1: datetime.datetime, date2: datetime.datetime) -> int:
+def subtract(date1: datetime.datetime, date2: datetime.datetime) -> int:
     date1 = pytz.timezone('UTC').localize(date1)
     delta = date1 - date2
     return int(delta.total_seconds() / 60)
-
-
-def create_stats_message(author: disnake.Member) -> disnake.Embed:
-    embed = disnake.Embed(
-        title='Статистика:',
-        # description='Description of the Embed Message',
-        color=disnake.Color.dark_magenta()
-    )
-
-    user_activity = file_manager.get_user_activity(author.id)
-    # Add fields to the embed message
-    embed.add_field(name='До следующего балла(мин):',
-                    value=str(file_manager.get_minutes_for_points() - user_activity[0]),
-                    inline=False)
-    embed.add_field(name='Количество баллов:', value=str(user_activity[1]), inline=True)
-    embed.add_field(name='Максимальное количество баллов:', value=str(user_activity[2]), inline=False)
-
-    # Set the author of the embed message
-    embed.set_author(name=author, icon_url=author.avatar)
-    return embed
-
-
-def create_help_message() -> disnake.Embed:
-    embed = disnake.Embed(
-        title='Need help?',
-        # description='Description of the Embed Message',
-        color=disnake.Color.blue()
-    )
-    embed.add_field(name='some help..?', value='asd')
-    return embed
 
 
 def match_roles(existing_roles: list[str]) -> bool:
@@ -82,3 +47,13 @@ def match_roles(existing_roles: list[str]) -> bool:
         if role in needed_roles:
             return True
     return False
+
+
+def edit_number_of_points(user_id: int, points: int) -> {int: [int, int, int]}:
+    activity = file_manager.get_user_activity(user_id)
+    activity[1] += points
+    if activity[1] < 0:
+        activity[1] = 0
+    if activity[2] < activity[1]:
+        activity[2] = activity[1]
+    return {user_id: activity}

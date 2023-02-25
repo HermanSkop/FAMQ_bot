@@ -74,12 +74,16 @@ def get_channels() -> list[int]:
     return parse_value_from_json(config.config_file_path, "channels")
 
 
-def get_roles() -> list[str]:
+def get_roles() -> list[int]:
     return parse_value_from_json(config.config_file_path, "roles")
 
 
 def get_games() -> list[str]:
     return parse_value_from_json(config.config_file_path, "games")
+
+
+def get_admin_roles() -> list[int]:
+    return parse_value_from_json(config.config_file_path, "admin_roles")
 
 
 def get_user_activity(user_id: int) -> [int, int, int]:
@@ -88,3 +92,25 @@ def get_user_activity(user_id: int) -> [int, int, int]:
         return [0, 0, 0]
     else:
         return act
+
+
+def write_user_activity(dto: {int: [int, int, int]}):
+    update_json_file(dto, config.activity_file_path)
+
+
+def write_role(role_id: int):
+    roles = parse_value_from_json(config.config_file_path, "roles")
+    if roles is None:
+        roles = []
+    if role_id not in roles:
+        roles.append(role_id)
+    update_json_file({"roles": roles}, config.config_file_path)
+
+
+def remove_role(role_id: int):
+    roles = parse_value_from_json(config.config_file_path, "roles")
+    if roles is None or role_id not in roles:
+        return
+    roles.remove(role_id)
+    update_json_file({"roles": roles}, config.config_file_path)
+
