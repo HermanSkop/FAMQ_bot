@@ -19,7 +19,7 @@ def read_json_file(path) -> dict:
         return {}
 
 
-def parse_value_from_json(path, key: str | int):
+def parse_value_from_json(path, key):
     """
     :param key: key to find the value
     :param path: path to the json file
@@ -31,7 +31,7 @@ def parse_value_from_json(path, key: str | int):
         return None
 
 
-def parse_key_from_json(path, value: str) -> list[Any] | None:
+def parse_key_from_json(path, value: str):
     try:
         dic = read_json_file(path)
         return [key for key in dic if dic[key] == value]
@@ -55,7 +55,7 @@ def write_to_txt_file(o, path):
         openfile.write(o + '\n')
 
 
-def update_json_file(new_object: {str: str} | {int: int}, path):
+def update_json_file(new_object, path):
     file_content = read_json_file(path)
     for key, value in new_object.items():
         key = str(key)
@@ -68,10 +68,6 @@ def update_json_file(new_object: {str: str} | {int: int}, path):
 
 def get_minutes_for_points() -> int:
     return parse_value_from_json(config.config_file_path, "minutes_for_point")
-
-
-def get_channels() -> list[int]:
-    return parse_value_from_json(config.config_file_path, "channels")
 
 
 def get_roles() -> list[int]:

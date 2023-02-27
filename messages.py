@@ -94,4 +94,8 @@ def add_embed_roles_list(guilds: list[disnake.Guild], embed_message: disnake.Emb
             role = guild.get_role(role_id)
             if role is not None:
                 embed_message.add_field(name=role.name, value='Сервер: ' + role.guild.name + '\n ID: ' + str(role.id),
-                                inline=False)
+                                        inline=False)
+
+
+def create_tag_active_message(tags: str, message: str):
+    return tags + '\n\n' + message

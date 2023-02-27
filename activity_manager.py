@@ -41,7 +41,7 @@ def subtract(date1: datetime.datetime, date2: datetime.datetime) -> int:
     return int(delta.total_seconds() / 60)
 
 
-def match_roles(existing_roles: list[str]) -> bool:
+def match_roles(existing_roles: list[int]) -> bool:
     needed_roles = file_manager.get_roles()
     for role in existing_roles:
         if role in needed_roles:
@@ -57,3 +57,13 @@ def edit_number_of_points(user_id: int, points: int) -> {int: [int, int, int]}:
     if activity[2] < activity[1]:
         activity[2] = activity[1]
     return {user_id: activity}
+
+
+def get_active_players(channel: disnake.TextChannel) -> str:
+    players = ''
+    games = file_manager.get_games()
+    for user in channel.members:
+        roles = [i.id for i in user.roles]
+        if user.activity is not None and user.activity.name in games and match_roles(roles):
+            players += '<@' + str(user.id) + '>'
+    return players
