@@ -90,6 +90,14 @@ def get_user_activity(user_id: int) -> [int, int, int]:
         return act
 
 
+def get_activities() -> {str: [int, int, int]}:
+    player = read_json_file(config.activity_file_path)
+    if player is None:
+        return {}
+    else:
+        return player
+
+
 def write_user_activity(dto: {int: [int, int, int]}):
     update_json_file(dto, config.activity_file_path)
 

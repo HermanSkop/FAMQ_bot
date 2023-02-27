@@ -67,3 +67,14 @@ def get_active_players(channel: disnake.TextChannel) -> str:
         if user.activity is not None and user.activity.name in games and match_roles(roles):
             players += '<@' + str(user.id) + '>'
     return players
+
+
+def get_best_players(server: disnake.Guild) -> list[disnake.Member]:
+    player_activities = file_manager.get_activities()
+    players = []
+    player_activities = sorted(player_activities.items(), key=lambda e: e[1][2], reverse=True)
+    for player_id, _ in player_activities:
+        player = server.get_member(int(player_id))
+        if player is not None:
+            players.append(player)
+    return players[0:config.rate_people_quantity]

@@ -1,23 +1,20 @@
 import disnake
+
+import activity_manager
 import file_manager
 
 
 def create_stats_message(author: disnake.Member) -> disnake.Embed:
     embed = disnake.Embed(
         title='Статистика:',
-        # description='Description of the Embed Message',
         color=disnake.Color.dark_magenta()
     )
-
     user_activity = file_manager.get_user_activity(author.id)
-    # Add fields to the embed message
     embed.add_field(name='До следующего балла(мин):',
                     value=str(file_manager.get_minutes_for_points() - user_activity[0]),
                     inline=False)
     embed.add_field(name='Количество баллов:', value=str(user_activity[1]), inline=True)
     embed.add_field(name='Максимальное количество баллов:', value=str(user_activity[2]), inline=False)
-
-    # Set the author of the embed message
     embed.set_author(name=author, icon_url=author.avatar)
     return embed
 
@@ -99,3 +96,18 @@ def add_embed_roles_list(guilds: list[disnake.Guild], embed_message: disnake.Emb
 
 def create_tag_active_message(tags: str, message: str):
     return tags + '\n\n' + message
+
+
+def create_rates_message(server: disnake.Guild):
+    embed = disnake.Embed(
+        title='Рейтинг лучших',
+        color=disnake.Color.dark_gold()
+    )
+    pos = 1
+    for player in activity_manager.get_best_players(server):
+        embed.add_field(name='#' + str(pos) + ' ' + str(player),
+                        value=file_manager.get_user_activity(player.id)[2],
+                        inline=False)
+        pos += 1
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
