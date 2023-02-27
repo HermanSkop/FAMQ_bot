@@ -24,6 +24,16 @@ async def on_presence_update(before, after):
             file_manager.write_user_activity(activity_manager.count_played_time(before.id, before.activity.start))
 
 
+@bot.slash_command(name='reset', description='Сбросить статистику пользователя')
+async def reset_user(ctx: disnake.ApplicationCommandInteraction, tag: str):
+    if access_manager.is_admin(ctx.author, ctx.channel):
+        user = ctx.guild.get_member(int(tag.strip("<@!>")))
+        activity_manager.reset_user(user.id)
+        await ctx.send(embed=messages.create_stats_message(user))
+    else:
+        await ctx.send(embed=messages.create_no_rights_message())
+
+
 @bot.slash_command(name='rate', description='Вывести таблицу лучших')
 async def show_rate(ctx: disnake.ApplicationCommandInteraction):
     await ctx.send(embed=messages.create_rates_message(ctx.guild))

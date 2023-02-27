@@ -78,3 +78,7 @@ def get_best_players(server: disnake.Guild) -> list[disnake.Member]:
         if player is not None:
             players.append(player)
     return players[0:config.rate_people_quantity]
+
+
+def reset_user(user_id: int):
+    file_manager.write_user_activity({user_id: [0, 0, 0]})
