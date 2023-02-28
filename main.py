@@ -1,6 +1,7 @@
 import disnake
 import access_manager
 import activity_manager
+import config
 import file_manager
 import messages
 from config import bot
@@ -21,15 +22,20 @@ async def on_presence_update(before, after):
             and before.activity is not None \
             and before.activity.name in file_manager.get_games() \
             and activity_manager.match_roles(roles):
-            file_manager.write_user_activity(activity_manager.count_played_time(before.id, before.activity.start))
+        file_manager.write_user_activity(activity_manager.count_played_time(before.id, before.activity.start))
 
 
 @bot.slash_command(name='reset', description='Сбросить статистику пользователя')
 async def reset_user(ctx: disnake.ApplicationCommandInteraction, tag: str):
     if access_manager.is_admin(ctx.author, ctx.channel):
-        user = ctx.guild.get_member(int(tag.strip("<@!>")))
-        activity_manager.reset_user(user.id)
-        await ctx.send(embed=messages.create_stats_message(user))
+        if not tag.strip("<@!>").isdigit():
+            await ctx.send(content=tag,
+                           embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
+                                                                     err_description=config.tag_err_desc))
+        else:
+            user = ctx.guild.get_member(int(tag.strip("<@!>")))
+            activity_manager.reset_user(user.id)
+            await ctx.send(embed=messages.create_stats_message(user))
     else:
         await ctx.send(embed=messages.create_no_rights_message())
 
@@ -88,21 +94,30 @@ async def remove_role(ctx: disnake.ApplicationCommandInteraction, role_id: str):
 @bot.slash_command(name='emend', description='Изменить количество баллов пользователя на n: username#0000, (-)n')
 async def emend_points(ctx: disnake.ApplicationCommandInteraction, tag: str, points: int):
     if access_manager.is_admin(ctx.author, ctx.channel):
-        user = ctx.guild.get_member(int(tag.strip("<@!>")))
-        if user is None or points is None:
-            await ctx.send(embed=messages.create_help_message())
+        if not tag.strip("<@!>").isdigit():
+            await ctx.send(content=tag, embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
+                                                                                err_description=config.tag_err_desc))
         else:
-            file_manager.write_user_activity(
-                activity_manager.edit_number_of_points(user.id, points)
-            )
-            await ctx.send(content=tag, embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
+            user = ctx.guild.get_member(int(tag.strip("<@!>")))
+            if user is None or points is None:
+                await ctx.send(embed=messages.create_help_message())
+            else:
+                file_manager.write_user_activity(
+                    activity_manager.edit_number_of_points(user.id, points)
+                )
+                await ctx.send(content=tag, embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
     else:
         await ctx.send(embed=messages.create_no_rights_message())
 
 
 @bot.slash_command(name='stats', description='Узнай свою статистику')
 async def print_stats(ctx: disnake.ApplicationCommandInteraction, tag: str):
-    await ctx.send(embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
+    if not tag.strip("<@!>").isdigit():
+        await ctx.send(content=tag,
+                       embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
+                                                                 err_description=config.tag_err_desc))
+    else:
+        await ctx.send(embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
 
 
 @bot.slash_command(name='help', description='Команды и условия использования')
@@ -110,4 +125,4 @@ async def print_help(ctx: disnake.ApplicationCommandInteraction):
     await ctx.send(embed=messages.create_help_message())
 
 
-bot.run(token='MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GSCE7S.w_Eb7d-QmjX9arDAW4eQZy5mifSJn85fRHbXz4')
+bot.run(token='MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GFGsbL.KxXcQQ9XsCJlA6PErAXYs1i146KGTI_TztvsRQ')
