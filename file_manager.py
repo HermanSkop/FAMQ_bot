@@ -50,9 +50,9 @@ def read_txt_file(path) -> list:
     return content
 
 
-def write_to_txt_file(o, path):
+def write_to_txt_file(obj, path):
     with open(path, "a") as openfile:
-        openfile.write(o + '\n')
+        openfile.write(obj + '\n')
 
 
 def update_json_file(new_object, path):
@@ -98,6 +98,10 @@ def get_activities() -> {str: [int, int, int]}:
         return player
 
 
+def get_points(user_id: int) -> int:
+    return get_user_activity(user_id)[1]
+
+
 def write_user_activity(dto: {int: [int, int, int]}):
     update_json_file(dto, config.activity_file_path)
 
@@ -118,3 +122,35 @@ def remove_role(role_id: int):
     roles.remove(role_id)
     update_json_file({"roles": roles}, config.config_file_path)
 
+
+def write_shop(dto: {int: [[str, int]]}):
+    write_to_json_file(dto, config.shops_file_path)
+
+
+def get_shop_content(guild_id: int) -> [[str, int]]:
+    shop = parse_value_from_json(config.shops_file_path, guild_id)
+    if shop is None:
+        shop = []
+    return shop
+
+
+def get_item(item_id: int, guild_id: int) -> [str, int]:
+    content = get_shop_content(guild_id)
+    if len(content) > int(item_id) and len(content[item_id]) == 2:
+        return content[int(item_id)]
+    else:
+        return None
+
+
+def add_item(item: [str, int], guild_id: int) -> bool:
+    shop = get_shop_content(guild_id)
+    if item in shop:
+        return False
+    shop.append(item)
+    write_shop({guild_id: shop})
+    return True
+
+
+def remove_item(name: str, guild_id: int):
+    shop = [item for item in get_shop_content(guild_id) if name not in item]
+    write_shop({guild_id: shop})

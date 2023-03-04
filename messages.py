@@ -1,7 +1,7 @@
 import disnake
-
 import activity_manager
 import file_manager
+from config import custom_shop_id
 
 
 def create_stats_message(author: disnake.Member) -> disnake.Embed:
@@ -109,5 +109,88 @@ def create_rates_message(server: disnake.Guild):
                         value=file_manager.get_user_activity(player.id)[2],
                         inline=False)
         pos += 1
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_shop_Select_Menu(guild_id: int):
+    content = file_manager.get_shop_content(guild_id)
+    if len(content) == 0:
+        return None
+
+    options = [disnake.SelectOption(label=item[0] + ': ' + str(item[1]) + ' pts',
+                                    value=content.index(item)) for item in content]
+
+    return disnake.ui.StringSelect(
+        options=options,
+        placeholder="Выберете товар",
+        min_values=1,
+        max_values=1
+    )
+
+
+def create_no_item_message():
+    embed = disnake.Embed(
+        title='Покупка прервана',
+        color=disnake.Color.brand_red()
+    )
+    embed.add_field(name='Товара больше нет в магазине', value='Обратитесь за помощью к администрации')
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_empty_shop_message() -> disnake.Embed:
+    embed = disnake.Embed(
+        title='Магазин пуст!',
+        color=disnake.Color.brand_red()
+    )
+    embed.add_field(name='Кажется администрация вашего сервера ещё не заполнила магазин.', value='')
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_shop_bill(items: [str, int]) -> disnake.Embed:
+    embed = disnake.Embed(color=disnake.Color.orange())
+    embed.description = "```" + items[0] + ' | ' + str(items[1]) + " pts```"
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_purchase_list(author: disnake.Member, item: [str, int]):
+    embed = disnake.Embed(color=disnake.Color.greyple())
+    embed.title = 'Куплены следующие товары:'
+    embed.description = f"{item[0]} | {str(item[1])} pts"
+    embed.set_author(name=author,
+                     icon_url=author.avatar.url)
+    return embed
+
+
+def create_no_money_message():
+    embed = disnake.Embed(color=disnake.Color.brand_red())
+    embed.title = 'Покупка прервана!'
+    embed.add_field(name='Недостаточно средств на счету', value='')
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_item_added_message(item: [str, int]):
+    embed = disnake.Embed(color=disnake.Color.brand_green())
+    embed.title = 'Товар успешно добавлен в магазин'
+    embed.add_field(name=item[0], value=str(item[1])+' pts')
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_item_exists_message(item: [str, int]):
+    embed = disnake.Embed(color=disnake.Color.brand_red())
+    embed.title = 'Товар невозможно добавить в магазин'
+    embed.add_field(name='Данный товар уже есть в магазине', value=item[0] + ' | ' + str(item[1])+' pts')
+    embed.set_footer(text='Больше можно узнать командой: /help')
+    return embed
+
+
+def create_item_removed_message():
+    embed = disnake.Embed(color=disnake.Color.brand_green())
+    embed.title = 'Товара в магазине больше нет'
     embed.set_footer(text='Больше можно узнать командой: /help')
     return embed

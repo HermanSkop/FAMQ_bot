@@ -26,6 +26,13 @@ def count_played_time(user_id: int, start_time: datetime.datetime) -> {int: [int
     else:
         max_points = user_activity[2]
 
+    # TODO logs
+    file_manager.write_to_txt_file('user: ' + str(user_id) +
+                                   ' | start: ' + str(start_time) +
+                                   ' | end: ' + str(datetime.datetime.utcnow()) +
+                                   ' | points added: ' + str(points) +
+                                   ' | minutes played: ' + str(mins), config.logs_file_path)
+
     return {
         user_id: [
             mins,
@@ -56,6 +63,14 @@ def edit_number_of_points(user_id: int, points: int) -> {int: [int, int, int]}:
         activity[1] = 0
     if activity[2] < activity[1]:
         activity[2] = activity[1]
+
+    # TODO logs
+    file_manager.write_to_txt_file('user: ' + str(user_id) +
+                                   ' | points added: ' + str(points) +
+                                   ' | final minutes: ' + str(activity[0]) +
+                                   ' | final points: ' + str(activity[1]) +
+                                   ' | final max points: ' + str(activity[2]), config.logs_file_path)
+
     return {user_id: activity}
 
 
