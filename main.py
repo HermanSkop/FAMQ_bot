@@ -24,7 +24,8 @@ async def on_presence_update(before, after):
             and before.activity is not None \
             and before.activity.name in file_manager.get_games() \
             and activity_manager.match_roles(roles):
-        file_manager.write_user_activity(activity_manager.count_played_time(before.id, before.activity.start))
+        print('here')
+        activity_manager.update_player(before.id, before.activity.start)
 
 
 @bot.slash_command(name='reset', description='Сбросить статистику пользователя',
@@ -37,8 +38,8 @@ async def reset_user(ctx: disnake.ApplicationCommandInteraction, tag: str):
                                                                      err_description=config.tag_err_desc))
         else:
             user = ctx.guild.get_member(int(tag.strip("<@!>")))
-            activity_manager.reset_user(user.id)
-            await ctx.send(content=tag, embed=messages.create_stats_message(user))
+            activity_manager.reset_user(ctx.guild.id, user.id)
+            await ctx.send(content=tag, embed=messages.create_stats_message(user, ctx.guild.id))
     else:
         await ctx.send(embed=messages.create_no_rights_message())
 
@@ -51,72 +52,58 @@ async def show_rate(ctx: disnake.ApplicationCommandInteraction):
 @bot.slash_command(name='tag', description='Тегнуть всех кто играет в GTAV',
                    default_member_permissions=disnake.Permissions(8))
 async def tag_active(ctx: disnake.ApplicationCommandInteraction, message: str):
-    if access_manager.is_admin(ctx.author, ctx.channel):
-        await ctx.send(content=messages.create_tag_active_message(activity_manager.get_active_players(ctx.channel),
-                                                                  message))
-    else:
-        await ctx.send(embed=messages.create_no_rights_message())
+    await ctx.send(content=messages.create_tag_active_message(activity_manager.get_active_players(ctx.channel),
+                                                              message))
 
 
 @bot.slash_command(name='roles', description='Вывести список ролей с их ID и серверами',
                    default_member_permissions=disnake.Permissions(8))
 async def roles(ctx: disnake.ApplicationCommandInteraction):
-    if access_manager.is_admin(ctx.author, ctx.channel):
-        await ctx.send(embed=messages.create_roles_message(bot.guilds))
-    else:
-        await ctx.send(embed=messages.create_no_rights_message())
+    await ctx.send(embed=messages.create_roles_message(bot.guilds))
 
 
 @bot.slash_command(name='add_role', description='Добавить новую роль, для которой будет считаться время в игре',
                    default_member_permissions=disnake.Permissions(8))
 async def add_role(ctx: disnake.ApplicationCommandInteraction, role_id: str):
-    if access_manager.is_admin(ctx.author, ctx.channel):
-        if role_id.isdigit():
-            file_manager.write_role(int(role_id))
-            await ctx.send(embed=messages.create_add_role_message(bot.guilds))
-        else:
-            await ctx.send(embed=messages.create_wrong_input_message(
-                err_name='Неправильный ввод',
-                err_description='Попробуйте ввести ID роли, например: 1078746439750004917'))
+    if role_id.isdigit():
+        file_manager.write_role(int(role_id))
+        await ctx.send(embed=messages.create_add_role_message(bot.guilds))
     else:
-        await ctx.send(embed=messages.create_no_rights_message())
+        await ctx.send(embed=messages.create_wrong_input_message(
+            err_name='Неправильный ввод',
+            err_description='Попробуйте ввести ID роли, например: 1078746439750004917'))
 
 
 @bot.slash_command(name='remove_role',
                    description='Удалить роль из списка используемых ролей для подсчёта времени в игре',
                    default_member_permissions=disnake.Permissions(8))
 async def remove_role(ctx: disnake.ApplicationCommandInteraction, role_id: str):
-    if access_manager.is_admin(ctx.author, ctx.channel):
-        if role_id.isdigit() and int(role_id) in file_manager.get_roles():
-            file_manager.remove_role(int(role_id))
-            await ctx.send(embed=messages.create_removed_role_message(bot.guilds))
-        else:
-            await ctx.send(embed=messages.create_wrong_input_message(
-                err_name='Неправильный ввод',
-                err_description='Вероятно такой роли не существует в списке ролей'))
+    if role_id.isdigit() and int(role_id) in file_manager.get_roles():
+        file_manager.remove_role(int(role_id))
+        await ctx.send(embed=messages.create_removed_role_message(bot.guilds))
     else:
-        await ctx.send(embed=messages.create_no_rights_message())
+        await ctx.send(embed=messages.create_wrong_input_message(
+            err_name='Неправильный ввод',
+            err_description='Вероятно такой роли не существует в списке ролей'))
 
 
 @bot.slash_command(name='emend', description='Изменить количество баллов пользователя на n: username#0000, (-)n',
                    default_member_permissions=disnake.Permissions(8))
 async def emend_points(ctx: disnake.ApplicationCommandInteraction, tag: str, points: int):
-    if access_manager.is_admin(ctx.author, ctx.channel):
-        if not tag.strip("<@!>").isdigit():
-            await ctx.send(content=tag, embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
-                                                                                  err_description=config.tag_err_desc))
-        else:
-            user = ctx.guild.get_member(int(tag.strip("<@!>")))
-            if user is None or points is None:
-                await ctx.send(embed=messages.create_help_message())
-            else:
-                file_manager.write_user_activity(
-                    activity_manager.edit_number_of_points(user.id, points)
-                )
-                await ctx.send(content=tag,
-                               embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
+    if not tag.strip("<@!>").isdigit():
+        await ctx.send(content=tag, embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
+                                                                              err_description=config.tag_err_desc))
     else:
-        await ctx.send(embed=messages.create_no_rights_message())
+        user = ctx.guild.get_member(int(tag.strip("<@!>")))
+        if user is None or points is None:
+            await ctx.send(embed=messages.create_help_message())
+        else:
+            file_manager.write_user_activity(
+                ctx.guild.id, {user.id: activity_manager.edit_points(ctx.guild.id, user.id, points)}
+            )
+            await ctx.send(content=tag,
+                           embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>"))),
+                                                               ctx.guild.id))
 
 
 @bot.slash_command(name='profile', description='Узнай свою статистику')
@@ -126,7 +113,8 @@ async def print_stats(ctx: disnake.ApplicationCommandInteraction, tag: str):
                        embed=messages.create_wrong_input_message(err_name=config.tag_err_name,
                                                                  err_description=config.tag_err_desc))
     else:
-        await ctx.send(embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>")))))
+        await ctx.send(embed=messages.create_stats_message(ctx.guild.get_member(int(tag.strip("<@!>"))),
+                                                           ctx.guild.id))
 
 
 @bot.slash_command(name='help', description='Команды и условия использования')
@@ -155,13 +143,16 @@ async def buy(interaction: disnake.Interaction, item_id: int):
     if item is None:
         await interaction.response.edit_message(embed=messages.create_no_item_message(), content=None, components=[])
     else:
-        if item[1] > file_manager.get_points(interaction.author.id):
+        if item[1] > file_manager.get_points(interaction.author.id, interaction.guild.id):
             await interaction.response.edit_message(embed=messages.create_no_money_message(),
                                                     content=None,
                                                     components=[])
         else:
             activity_manager.file_manager.write_user_activity(
-                activity_manager.edit_number_of_points(interaction.author.id, -item[1]))
+                interaction.guild.id,
+                {interaction.author.id:
+                     activity_manager.edit_points(interaction.guild.id, interaction.author.id, -item[1])}
+            )
             await interaction.response.edit_message(content=None,
                                                     components=[],
                                                     embed=messages.create_purchase_list(author=interaction.author,
@@ -177,7 +168,8 @@ async def chose_item(interaction: disnake.Interaction):
         message_id = interaction.message.id
 
         if item is None:
-            await interaction.response.edit_message(embed=messages.create_no_item_message(), content=None, components=[])
+            await interaction.response.edit_message(embed=messages.create_no_item_message(), content=None,
+                                                    components=[])
         else:
             submit_button = disnake.ui.Button(label=str(item[1]) + ' pts',
                                               style=disnake.ButtonStyle.green,
@@ -215,4 +207,4 @@ async def show_shop(ctx: disnake.ApplicationCommandInteraction):
             await ctx.delete_original_message()
 
 
-bot.run(token='MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GFGsbL.KxXcQQ9XsCJlA6PErAXYs1i146KGTI_TztvsRQ')
+bot.run(token="MTA3NzI3NTE1MDA5NDk2Njg3NQ.GmYZIB.KKSo2LfCG9dgr1qXIUugFp9N8GpBJ7z_xRRe3g")

@@ -82,12 +82,20 @@ def get_admin_roles() -> list[int]:
     return parse_value_from_json(config.config_file_path, "admin_roles")
 
 
-def get_user_activity(user_id: int) -> [int, int, int]:
-    act = parse_value_from_json(config.activity_file_path, user_id)
-    if act is None:
+def get_user_activity(guild_id: int, user_id: int) -> [int, int, int]:
+    user_id = str(user_id)
+    guild = get_guild(guild_id)
+    if user_id not in guild:
         return [0, 0, 0]
     else:
-        return act
+        return guild[user_id]
+
+
+def get_guild(guild_id: int) -> {}:
+    guild = parse_value_from_json(config.activity_file_path, guild_id)
+    if guild is None:
+        return {}
+    return guild
 
 
 def get_activities() -> {str: [int, int, int]}:
@@ -98,12 +106,27 @@ def get_activities() -> {str: [int, int, int]}:
         return player
 
 
-def get_points(user_id: int) -> int:
-    return get_user_activity(user_id)[1]
+def get_points(user_id: int, guild_id: int) -> int:
+    return get_user_activity(guild_id, user_id)[1]
 
 
-def write_user_activity(dto: {int: [int, int, int]}):
-    update_json_file(dto, config.activity_file_path)
+def write_user_activity(guild_id: int, user: {int: [int, int, int]}):
+    updated_guild = update_guild(guild_id, user)
+    update_json_file({guild_id: updated_guild}, config.activity_file_path)
+
+
+def update_guild(guild_id: int, updated_user: {int: [int, int, int]}) -> {str: [int, int, int]}:
+    guild = get_guild(guild_id)
+    for key, value in updated_user.items():
+        guild[str(key)] = value
+    return guild
+
+
+def get_guilds() -> {str: {str: [int, int, int]}}:
+    guilds = read_json_file(config.activity_file_path)
+    if guilds is None:
+        return {}
+    return guilds
 
 
 def write_role(role_id: int):
