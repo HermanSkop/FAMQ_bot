@@ -18,13 +18,12 @@ async def on_ready():
 
 
 @bot.event
-async def on_presence_update(before, after):
+async def on_presence_update(before: disnake.Member, after: disnake.Member):
     roles = [i.id for i in after.roles]
     if before.activity != after.activity \
             and before.activity is not None \
             and before.activity.name in file_manager.get_games() \
             and activity_manager.match_roles(roles):
-        print('here')
         activity_manager.update_player(before.id, before.activity.start)
 
 
@@ -208,3 +207,5 @@ async def show_shop(ctx: disnake.ApplicationCommandInteraction):
 
 
 bot.run(token="MTA3NzI3NTE1MDA5NDk2Njg3NQ.GmYZIB.KKSo2LfCG9dgr1qXIUugFp9N8GpBJ7z_xRRe3g")
+
+# test MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GMGVQe.Z9x_mjcNxkZlr3bz1bUU9bEsXUamGbgo1En2yM

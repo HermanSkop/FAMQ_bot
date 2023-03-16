@@ -1,3 +1,4 @@
+import datetime
 import json
 from json import JSONDecodeError
 from typing import Any
@@ -177,3 +178,11 @@ def add_item(item: [str, int], guild_id: int) -> bool:
 def remove_item(name: str, guild_id: int):
     shop = [item for item in get_shop_content(guild_id) if name not in item]
     write_shop({guild_id: shop})
+
+
+def get_last_join(user_id: id) -> str:
+    return parse_value_from_json(config.last_join_path, str(user_id))
+
+
+def write_last_join(user_id: id, last_time: str):
+    update_json_file({user_id: last_time}, config.last_join_path)

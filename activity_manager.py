@@ -12,8 +12,18 @@ def update_player(user_id: int, start_time: datetime.datetime):
     :param start_time: time when user started playing
     :param user_id: user to be counted
     """
-    for guild_id in file_manager.get_guilds():
-        file_manager.write_user_activity(guild_id, count_played_time(guild_id, user_id, start_time))
+    if file_manager.get_last_join(user_id) is None or \
+            str(start_time.timestamp()) != file_manager.get_last_join(user_id):
+        for guild_id in file_manager.get_guilds():
+            file_manager.write_user_activity(guild_id, count_played_time(guild_id, user_id, start_time))
+    else:
+        # TODO logs
+        file_manager.write_to_txt_file('user: ' + str(user_id) +
+                                       ' | start: ' + str(start_time) +
+                                       ' | now: ' + str(datetime.datetime.utcnow()) +
+                                       ' || Left game but points were not added',
+                                       config.logs_file_path)
+    file_manager.write_last_join(user_id, str(start_time.timestamp()))
 
 
 def count_played_time(guild_id: int, user_id: int, start_time: datetime.datetime) -> {int: [int, int, int]}:
@@ -26,9 +36,9 @@ def count_played_time(guild_id: int, user_id: int, start_time: datetime.datetime
     """
     user_activity = file_manager.get_user_activity(guild_id, user_id)
 
-    mins = subtract(datetime.datetime.utcnow(), start_time) + user_activity[0]
-    points = user_activity[1] + (mins // file_manager.get_minutes_for_points())
-    mins %= file_manager.get_minutes_for_points()
+    all_mins = subtract(datetime.datetime.utcnow(), start_time) + user_activity[0]
+    points = user_activity[1] + (all_mins // file_manager.get_minutes_for_points())
+    mins = all_mins % file_manager.get_minutes_for_points()
 
     if user_activity[2] < points:
         max_points = points
@@ -39,6 +49,8 @@ def count_played_time(guild_id: int, user_id: int, start_time: datetime.datetime
     file_manager.write_to_txt_file('user: ' + str(user_id) +
                                    ' | start: ' + str(start_time) +
                                    ' | end: ' + str(datetime.datetime.utcnow()) +
+                                   ' | mins after subtraction: ' + str(all_mins) +
+                                   ' | currently has: ' + str(user_activity[1]) +
                                    ' | points added: ' + str(points) +
                                    ' | minutes played: ' + str(mins), config.logs_file_path)
 
