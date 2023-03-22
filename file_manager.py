@@ -118,8 +118,11 @@ def write_user_activity(guild_id: int, user: {int: [int, int, int]}):
 
 def update_guild(guild_id: int, updated_user: {int: [int, int, int]}) -> {str: [int, int, int]}:
     guild = get_guild(guild_id)
-    for key, value in updated_user.items():
-        guild[str(key)] = value
+    if guild is None:
+        guild = {}
+    updated_user = {str(key): value for key, value in updated_user.items()}
+
+    guild.update(updated_user)
     return guild
 
 

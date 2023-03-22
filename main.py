@@ -14,7 +14,19 @@ async def on_ready():
     print(f'{bot.user} is connected to the following guilds:\n')
     for guild in bot.guilds:
         print(f'{guild.name}(id: {guild.id})')
+        config.servers.append(guild)
+        # TODO add guilds to activity
     print('\n')
+
+
+@bot.event
+async def on_guild_join(guild: disnake.guild):
+    config.servers.append(guild)
+
+
+@bot.event
+async def on_guild_remove(guild: disnake.guild):
+    config.servers.append(guild)
 
 
 @bot.event
@@ -207,5 +219,4 @@ async def show_shop(ctx: disnake.ApplicationCommandInteraction):
 
 
 bot.run(token="MTA3NzI3NTE1MDA5NDk2Njg3NQ.GmYZIB.KKSo2LfCG9dgr1qXIUugFp9N8GpBJ7z_xRRe3g")
-
 # test MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GMGVQe.Z9x_mjcNxkZlr3bz1bUU9bEsXUamGbgo1En2yM

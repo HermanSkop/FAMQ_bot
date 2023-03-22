@@ -19,3 +19,5 @@ tag_err_desc = 'Тег должен выглядеть примерно так: 
 
 custom_shop_id = 'shop'
 custom_buy_button_id = 'button'
+
+servers = []

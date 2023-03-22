@@ -26,3 +26,11 @@ def is_buy_button(interaction: disnake.Interaction, message_id: int):
         if id[0] == config.custom_buy_button_id and id[1] == str(message_id):
             return True
     return False
+
+
+def in_servers(user_id: int) -> []:
+    present_in = []
+    for server in config.servers:
+        if server.get_member(user_id) is not None:
+            present_in.append(server.id)
+    return present_in

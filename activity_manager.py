@@ -2,6 +2,8 @@ import datetime
 
 import disnake
 import pytz
+
+import access_manager
 import config
 import file_manager
 
@@ -14,7 +16,7 @@ def update_player(user_id: int, start_time: datetime.datetime):
     """
     if file_manager.get_last_join(user_id) is None or \
             str(start_time.timestamp()) != file_manager.get_last_join(user_id):
-        for guild_id in file_manager.get_guilds():
+        for guild_id in access_manager.in_servers(user_id):
             file_manager.write_user_activity(guild_id, count_played_time(guild_id, user_id, start_time))
     else:
         # TODO logs
