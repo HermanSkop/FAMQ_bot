@@ -14,6 +14,7 @@ async def on_ready():
     print(f'{bot.user} is connected to the following guilds:\n')
     for guild in bot.guilds:
         print(f'{guild.name}(id: {guild.id})')
+        file_manager.update_guilds({guild.id: {}})
         config.servers.append(guild)
         # TODO add guilds to activity
     print('\n')
