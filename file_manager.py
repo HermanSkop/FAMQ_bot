@@ -126,6 +126,12 @@ def update_guild(guild_id: int, updated_user: {int: [int, int, int]}) -> {str: [
     return guild
 
 
+def update_guilds(updated_guild: {int: {int: [int, int, int]}}):
+    if updated_guild is None:
+        return
+    update_json_file(updated_guild, config.activity_file_path)
+
+
 def get_guilds() -> {str: {str: [int, int, int]}}:
     guilds = read_json_file(config.activity_file_path)
     if guilds is None:

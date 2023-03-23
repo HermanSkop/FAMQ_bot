@@ -21,12 +21,16 @@ async def on_ready():
 
 @bot.event
 async def on_guild_join(guild: disnake.guild):
+    file_manager.update_guilds({guild.id: {}})
     config.servers.append(guild)
+    print(f'Connected to {guild.name}(id: {guild.id})')
 
 
 @bot.event
 async def on_guild_remove(guild: disnake.guild):
     config.servers.append(guild)
+    print(f'Disconnected from {guild.name}(id: {guild.id})')
+
 
 
 @bot.event

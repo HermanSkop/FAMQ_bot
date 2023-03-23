@@ -113,7 +113,7 @@ def get_active_players(channel: disnake.TextChannel) -> str:
 
 
 def get_best_players(server: disnake.Guild) -> list[disnake.Member]:
-    player_activities = file_manager.get_activities()
+    player_activities = list(value for key, value in file_manager.get_activities().items() if key == str(server.id))[0]
     players = []
     player_activities = sorted(player_activities.items(), key=lambda e: e[1][2], reverse=True)
     for player_id, _ in player_activities:

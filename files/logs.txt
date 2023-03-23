@@ -60,3 +60,24 @@ user: 1016365174791348265 | start: 2023-03-22 17:37:24.388000+00:00 | end: 2023-
 user: 1016365174791348265 | start: 2023-03-22 17:37:24.388000+00:00 | end: 2023-03-22 17:47:35.259479 | mins after subtraction: 10 | currently has: 0 | points added: 0 | minutes played: 10
 user: 1016365174791348265 | start: 2023-03-22 17:37:24.388000+00:00 | now: 2023-03-22 17:48:46.640762 || Left game but points were not added
 user: 1016365174791348265 | start: 2023-03-22 17:37:24.388000+00:00 | now: 2023-03-22 17:52:57.208743 || Left game but points were not added
+user: 524570518662152203 | start: 2023-03-23 10:58:32.069000+00:00 | end: 2023-03-23 12:10:05.942746 | mins after subtraction: 71 | currently has: 0 | points added: 1 | minutes played: 11
+user: 524570518662152203 | start: 2023-03-23 10:58:32.069000+00:00 | end: 2023-03-23 12:10:05.954763 | mins after subtraction: 71 | currently has: 0 | points added: 1 | minutes played: 11
+user: 508574240207929354 | start: 2023-03-23 12:12:08.632000+00:00 | end: 2023-03-23 12:12:14.032102 | mins after subtraction: 0 | currently has: 0 | points added: 0 | minutes played: 0
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | end: 2023-03-23 12:17:50.163012 | mins after subtraction: 3 | currently has: 0 | points added: 0 | minutes played: 3
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:23:16.922483 || Left game but points were not added
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:23:16.936271 || Left game but points were not added
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:23:16.944241 || Left game but points were not added
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | end: 2023-03-23 12:23:38.522798 | mins after subtraction: 193 | currently has: 0 | points added: 3 | minutes played: 13
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | end: 2023-03-23 12:24:18.147374 | mins after subtraction: 194 | currently has: 0 | points added: 3 | minutes played: 14
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | now: 2023-03-23 12:24:18.201669 || Left game but points were not added
+user: 768349562564771871 | start: 2023-03-23 06:57:15.396000+00:00 | end: 2023-03-23 12:28:13.510275 | mins after subtraction: 330 | currently has: 0 | points added: 5 | minutes played: 30
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:28:57.023270 || Left game but points were not added
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:29:03.185188 || Left game but points were not added
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:29:12.589932 || Left game but points were not added
+user: 768349562564771871 | start: 2023-03-23 06:57:15.396000+00:00 | now: 2023-03-23 12:29:25.831707 || Left game but points were not added
+user: 768349562564771871 | start: 2023-03-23 06:57:15.396000+00:00 | now: 2023-03-23 12:29:28.460836 || Left game but points were not added
+user: 508574240207929354 | start: 2023-03-23 12:13:58.898000+00:00 | now: 2023-03-23 12:29:42.593254 || Left game but points were not added
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | now: 2023-03-23 12:38:16.897050 || Left game but points were not added
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | now: 2023-03-23 12:38:18.810625 || Left game but points were not added
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | now: 2023-03-23 12:38:38.046917 || Left game but points were not added
+user: 1016365174791348265 | start: 2023-03-23 09:19:45.666000+00:00 | now: 2023-03-23 12:38:53.511132 || Left game but points were not added
