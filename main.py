@@ -33,15 +33,21 @@ async def on_guild_remove(guild: disnake.guild):
     print(f'Disconnected from {guild.name}(id: {guild.id})')
 
 
-
 @bot.event
 async def on_presence_update(before: disnake.Member, after: disnake.Member):
     roles = [i.id for i in after.roles]
     if before.activity != after.activity \
             and before.activity is not None \
             and before.activity.name in file_manager.get_games() \
+            and str(before.guild.id) not in file_manager.paused_guilds() \
             and activity_manager.match_roles(roles):
         activity_manager.update_player(before.id, before.activity.start)
+
+
+@bot.slash_command(name='pause', description='Приостановить/возобновить выдачу баллов за отыгранное время',
+                   default_member_permissions=disnake.Permissions(8))
+async def pause_activity(ctx: disnake.ApplicationCommandInteraction):
+    await ctx.send(embed=messages.create_guild_paused_message(file_manager.toggle_paused_guild(ctx.guild.id)))
 
 
 @bot.slash_command(name='reset', description='Сбросить статистику пользователя',
@@ -223,5 +229,5 @@ async def show_shop(ctx: disnake.ApplicationCommandInteraction):
             await ctx.delete_original_message()
 
 
-bot.run(token="MTA3NzI3NTE1MDA5NDk2Njg3NQ.GmYZIB.KKSo2LfCG9dgr1qXIUugFp9N8GpBJ7z_xRRe3g")
-# test MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GMGVQe.Z9x_mjcNxkZlr3bz1bUU9bEsXUamGbgo1En2yM
+bot.run(token="MTA3OTcxNjMxNTgwOTQ1MjA4Mw.GMGVQe.Z9x_mjcNxkZlr3bz1bUU9bEsXUamGbgo1En2yM")
+# main MTA3NzI3NTE1MDA5NDk2Njg3NQ.GmYZIB.KKSo2LfCG9dgr1qXIUugFp9N8GpBJ7z_xRRe3g

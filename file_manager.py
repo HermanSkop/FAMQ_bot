@@ -52,8 +52,15 @@ def read_txt_file(path) -> list:
 
 
 def write_to_txt_file(obj, path):
-    with open(path, "a") as openfile:
-        openfile.write(obj + '\n')
+    with open(path, "w") as openfile:
+        openfile.write(str(obj) + '\n')
+
+
+def write_all_to_txt_file(obj: list, path):
+    if len(obj) == 0:
+        write_to_txt_file('', path)
+    for i in obj:
+        write_to_txt_file(i, path)
 
 
 def update_json_file(new_object, path):
@@ -195,3 +202,25 @@ def get_last_join(user_id: id) -> str:
 
 def write_last_join(user_id: id, last_time: str):
     update_json_file({user_id: last_time}, config.last_join_path)
+
+
+def toggle_paused_guild(guild_id: int) -> bool:
+    """
+    Adds id to paused if there is no such id yet. Otherwise, removes id from the list
+    :param guild_id: id of guild to be toggled
+    :return: true if added and false if removed
+    """
+    guild_id = str(guild_id)
+    added = False
+    guild_ids = read_txt_file(config.paused_guilds_path)
+    if guild_id not in guild_ids:
+        guild_ids.append(guild_id)
+        added = True
+    else:
+        guild_ids.remove(guild_id)
+    write_all_to_txt_file(guild_ids, config.paused_guilds_path)
+    return added
+
+
+def paused_guilds() -> list:
+    return read_txt_file(config.paused_guilds_path)

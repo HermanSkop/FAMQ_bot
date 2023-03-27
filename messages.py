@@ -194,3 +194,9 @@ def create_item_removed_message():
     embed.title = 'Товара в магазине больше нет'
     embed.set_footer(text='Больше можно узнать командой: /help')
     return embed
+
+
+def create_guild_paused_message(paused: bool):
+    embed = disnake.Embed(color=disnake.Color.yellow())
+    embed.title = 'Выдача баллов за роли успешно ' + ('приостановлена' if paused else 'возобновлена') + '.'
+    return embed

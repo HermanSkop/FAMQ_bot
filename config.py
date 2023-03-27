@@ -10,6 +10,7 @@ config_file_path = files_path + 'config.json'
 logs_file_path = files_path + 'logs.txt'
 shops_file_path = files_path + 'shops.json'
 last_join_path = files_path + 'last_join.json'
+paused_guilds_path = files_path + 'paused_guilds.txt'
 
 rate_people_quantity = 10
 shop_time_delay = 60
